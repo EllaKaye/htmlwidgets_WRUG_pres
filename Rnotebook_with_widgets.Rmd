@@ -1,0 +1,38 @@
+---
+title: "R Notebook with htmlwidgets"
+output:
+  html_document: default
+---
+
+# DataTables
+
+Here's the iris data in a DataTable
+
+```{r}
+library(DT)
+datatable(iris, options = list(pageLength = 5))
+```
+
+
+
+# leafet
+
+Here's a map
+
+```{r echo = TRUE, warning = FALSE, message=TRUE}
+library(leaflet)
+
+africa_data_points <- data.frame(
+    lat = rnorm(100, mean = 6.9, sd = 9),
+    lng = rnorm(100, mean = 17.7, sd = 9),
+    size = runif(100, 5, 10),
+    popup = as.character(1:100))
+
+africa_data_points %>%
+    leaflet() %>%
+    addTiles() %>%
+    #addProviderTiles("OpenTopoMap") %>%
+    addCircleMarkers(radius = ~size, popup = ~popup)
+```
+
+

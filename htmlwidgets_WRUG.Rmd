@@ -1,0 +1,92 @@
+---
+title: "htmlwidgets"
+author: "Ella Kaye (lifting heavily from Martin John Hadley)"
+date: "May 25th, 2017"
+output: ioslides_presentation
+css: my.css
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## htmlwidgets: JavaScript
+
+The interactive web is driven by JavaScript, the majority of interactive elements that you use on websites are written in JavaScript - from interactive maps to auto-completing pop-up menus. 
+
+## htmlwidgets: The Framework
+
+Like in R, there are hundreds of different JavaScript libraries dedicated to various visualisation tasks. 
+
+There is a package called `htmlwidgets` that allows R developers to easily build bindings to JavaScript libraries, allowing incredibly rich interactive content for the web to be built just with the R language.
+
+## htmlwidgets: The Packages
+
+These bindings to JavaScript libraries are typically distributed as individual R packages; an individual R package for an individual JavaScript library. The htmlwidgets.org website provides a showcase of some of the `htmlwidget` dependent bindings that are available through CRAN.
+
+[SHOW WEBSITE](http://htmlwidgets.org).
+
+## In R notebooks
+
+[SHOW .RMD AND .HTML]
+
+## DiagrammeR
+
+[SHOW .RMD AND .HTML]
+
+## In Shiny Apps
+```{r, echo=F, cache = FALSE}
+library(shiny)
+library(leaflet)
+shinyApp(
+  ui = fluidPage(
+    sidebarLayout(
+      sidebarPanel(
+    sliderInput("latitutde", label = "Latitude", min = 5, max = 8, value = 6.9),
+    sliderInput("longitude", label = "Longtidue", min = 15, max = 19, value = 17.7),
+    sliderInput("sd", label = "Standard Deviation of Points", min = 5, max = 20, value = 10),
+    selectInput("mapType", label = "Map Type:", choices = c("OpenStreetMap", "OpenStreetMap.BlackAndWhite","OpenTopoMap"))),
+    mainPanel(
+    leafletOutput("africa_map")
+  ))),
+  server = function(input, output) {
+    
+    output$africa_map <- renderLeaflet({
+      
+      africa_data_points = data.frame(
+      lat = rnorm(100, mean = input$latitutde, sd = input$sd),
+      lng = rnorm(100, mean = input$longitude, sd = input$sd),
+      size = runif(100, 5, 10),
+      popup = as.character(1:100)
+    )
+    
+      m <- leaflet(africa_data_points) %>%
+        addProviderTiles(input$mapType)
+      m %>% addCircleMarkers(radius = ~size, popup = ~popup)
+      
+    })
+  },options = list(height = "100%")
+)
+
+```
+
+## Choosing libraries
+There are currently 85 htmlwidget libraries available, many have overlapping features.
+
+<div class="incremental"> 
+The following guide is currently under development [ox-it.github.io/OxfordIDN_htmlwidgets](http://ox-it.github.io/OxfordIDN_htmlwidgets) and aims to answer the following questions:
+
+- Which library is capable of making chart X?
+- Which charts can be made with library X?
+- What type of data can be displayed with each chart/library?
+- How does the process for creating chart X compare across the available libraries?
+</div>
+
+<div class="incremental">
+There is also a very alpha library called `oidnChaRts` that aims to make it simple to switch between different htmlwidget libraries.
+</div>
+
+## Further info
+[Oxford IDN](http://idn.it.ox.ac.uk/home)
